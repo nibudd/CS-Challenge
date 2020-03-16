@@ -16,46 +16,42 @@ namespace ConsoleApp1
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Press ? to get instructions.");
-            if (Console.ReadLine() == "?")
+            Console.WriteLine("JOKE GENERATOR\n");
+            while (true)
             {
-                while (true)
+                Console.WriteLine("Press c to get categories");
+                Console.WriteLine("Press r to get random jokes");
+                key = Console.ReadKey().KeyChar;
+                if (key == 'c')
                 {
-                    Console.WriteLine("Press c to get categories");
-                    Console.WriteLine("Press r to get random jokes");
+                    getCategories();
+                    PrintResults();
+                }
+                if (key == 'r')
+                {
+                    Console.WriteLine("Want to use a random name? y/n");
                     key = Console.ReadKey().KeyChar;
-                    if (key == 'c')
+                    if (key == 'y')
+                        GetNames();
+                    Console.WriteLine("Want to specify a category? y/n");
+                    if (key == 'y')
                     {
-                        getCategories();
+                        Console.WriteLine("How many jokes do you want? (1-9)");
+                        int n = Int32.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter a category;");
+                        GetRandomJokes(Console.ReadLine(), n);
                         PrintResults();
                     }
-                    if (key == 'r')
+                    else
                     {
-                        Console.WriteLine("Want to use a random name? y/n");
-                        key = Console.ReadKey().KeyChar;
-                        if (key == 'y')
-                            GetNames();
-                        Console.WriteLine("Want to specify a category? y/n");
-                        if (key == 'y')
-                        {
-                            Console.WriteLine("How many jokes do you want? (1-9)");
-                            int n = Int32.Parse(Console.ReadLine());
-                            Console.WriteLine("Enter a category;");
-                            GetRandomJokes(Console.ReadLine(), n);
-                            PrintResults();
-                        }
-                        else
-                        {
-                            Console.WriteLine("How many jokes do you want? (1-9)");
-                            int n = Int32.Parse(Console.ReadLine());
-                            GetRandomJokes(null, n);
-                            PrintResults();
-                        }
+                        Console.WriteLine("How many jokes do you want? (1-9)");
+                        int n = Int32.Parse(Console.ReadLine());
+                        GetRandomJokes(null, n);
+                        PrintResults();
                     }
-                    names = null;
                 }
+                names = null;
             }
-
         }
 
         private static void PrintResults()
