@@ -23,7 +23,7 @@ namespace ConsoleApp1
                 {
                     Console.WriteLine("Press c to get categories");
                     Console.WriteLine("Press r to get random jokes");
-                    GetEnteredKey(Console.ReadKey());
+                    key = Console.ReadKey().KeyChar;
                     if (key == 'c')
                     {
                         getCategories();
@@ -32,7 +32,7 @@ namespace ConsoleApp1
                     if (key == 'r')
                     {
                         Console.WriteLine("Want to use a random name? y/n");
-                        GetEnteredKey(Console.ReadKey());
+                        key = Console.ReadKey().KeyChar;
                         if (key == 'y')
                             GetNames();
                         Console.WriteLine("Want to specify a category? y/n");
@@ -61,49 +61,6 @@ namespace ConsoleApp1
         private static void PrintResults()
         {
             Console.WriteLine("[" + string.Join(",", results) + "]");
-        }
-
-        private static void GetEnteredKey(ConsoleKeyInfo consoleKeyInfo)
-        {
-            switch (consoleKeyInfo.Key)
-            {
-                case ConsoleKey.C:
-                    key = 'c';
-                    break;
-                case ConsoleKey.D0:
-                    key = '0';
-                    break;
-                case ConsoleKey.D1:
-                    key = '1';
-                    break;
-                case ConsoleKey.D3:
-                    key = '3';
-                    break;
-                case ConsoleKey.D4:
-                    key = '4';
-                    break;
-                case ConsoleKey.D5:
-                    key = '5';
-                    break;
-                case ConsoleKey.D6:
-                    key = '6';
-                    break;
-                case ConsoleKey.D7:
-                    key = '7';
-                    break;
-                case ConsoleKey.D8:
-                    key = '8';
-                    break;
-                case ConsoleKey.D9:
-                    key = '9';
-                    break;
-                case ConsoleKey.R:
-                    key = 'r';
-                    break;
-                case ConsoleKey.Y:
-                    key = 'y';
-                    break;
-            }
         }
 
         private static void GetRandomJokes(string category, int number)
