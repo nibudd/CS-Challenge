@@ -50,7 +50,7 @@ namespace ConsoleApp1
         /// </summary>
         /// <param name="client2"></param>
         /// <returns></returns>
-		public static dynamic Getnames()
+		public static dynamic Getnames()	
 		{
 			HttpClient client = new HttpClient();
 			client.BaseAddress = new Uri(_url);
@@ -63,7 +63,7 @@ namespace ConsoleApp1
 			HttpClient client = new HttpClient();
 			client.BaseAddress = new Uri(_url);
 
-			return new string[] { Task.FromResult(client.GetStringAsync("categories").Result).Result };
+			return new string[] { Task.FromResult(client.GetStringAsync("jokes/categories").Result).Result };
 		}
     }
 }
