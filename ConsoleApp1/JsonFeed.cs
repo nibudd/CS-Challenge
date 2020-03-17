@@ -39,7 +39,7 @@ namespace ConsoleApp1
                 int index = joke.IndexOf("Chuck Norris");
                 string firstPart = joke.Substring(0, index);
                 string secondPart = joke.Substring(0 + index + "Chuck Norris".Length, joke.Length - (index + "Chuck Norris".Length));
-                joke = firstPart + " " + firstname + " " + lastname + secondPart;
+                joke = firstPart + firstname + " " + lastname + secondPart;
             }
 
             return new string[] { JsonConvert.DeserializeObject<dynamic>(joke).value };
