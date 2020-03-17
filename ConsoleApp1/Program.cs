@@ -11,7 +11,6 @@ namespace ConsoleApp1
     class Program
     {
         static string[] results = new string[50];
-        static char key;
         static Tuple<string, string> names;
         static List<Action> menuMethods = new List<Action>();
         static int menuIndex = 0;
@@ -50,7 +49,7 @@ namespace ConsoleApp1
 
         private static void mUseRandomName()
         {
-            Console.WriteLine("Want to use a random name? y/n: ");
+            Console.Write("Want to use a random name? y/n: ");
             List<string> validInputs = new List<string>() { "y", "n" };
             string userInput = getUserInput(validInputs);
             if (userInput != "")
@@ -72,7 +71,7 @@ namespace ConsoleApp1
 
         private static void mUseCategory()
         {
-            Console.WriteLine("Want to select a category? y/n: ");
+            Console.Write("Want to select a category? y/n: ");
             List<string> validInputs = new List<string>() { "y", "n" };
             string userInput = getUserInput(validInputs);
             if (userInput != "")
@@ -86,7 +85,7 @@ namespace ConsoleApp1
         {
             if (!usesCategory) return;
             printCategories();
-            Console.WriteLine("Enter category number: ");
+            Console.Write("Enter category number: ");
             List<string> validInputs = getRangeList(jokeCategories.Count());
             string userInput = getUserInput(validInputs);
             if (userInput != "")
@@ -98,7 +97,7 @@ namespace ConsoleApp1
 
         private static void mSelectJokeQuantity()
         {
-            Console.WriteLine("How many jokes do you want? (1-9): ");
+            Console.Write("How many jokes do you want? (1-9): ");
             List<string> validInputs = getRangeList(9);
             string userInput = getUserInput(validInputs);
             if (userInput != "")
@@ -118,7 +117,7 @@ namespace ConsoleApp1
 
         private static void mContinue()
         {
-            Console.WriteLine("Want to get more jokes? y/n: ");
+            Console.Write("Want to get more jokes? y/n: ");
             List<string> validInputs = new List<string>() { "y", "n" };
             string userInput = getUserInput(validInputs);
             if (userInput != "")
