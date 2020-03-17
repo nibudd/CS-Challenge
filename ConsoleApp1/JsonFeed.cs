@@ -32,7 +32,7 @@ namespace ConsoleApp1
 				url += category;
 			}
 
-            string joke = Task.FromResult(client.GetStringAsync(url).Result).Result;
+            string joke = client.GetStringAsync(url).Result;
 
             if (firstname != null && lastname != null)
             {
