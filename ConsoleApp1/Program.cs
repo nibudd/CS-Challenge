@@ -20,48 +20,25 @@ namespace ConsoleApp1
         static List<string> jokeCategories;
         static string category;
         static int jokeQuantity;
+        static bool wantsMoreJokes = true;
 
         static void Main(string[] args)
         {
             GetCategories();
             menuMethods.Add(mUseRandomName);
+            menuMethods.Add(mGetNames);
+            menuMethods.Add(mUseCategory);
+            menuMethods.Add(mSelectCategory);
+            menuMethods.Add(mSelectJokeQuantity);
+            menuMethods.Add(mPrintJokes);
+            menuMethods.Add(mContinue);
 
             Console.WriteLine("JOKE GENERATOR\n");
-            while (true)
+            while (wantsMoreJokes)
             {
-                Console.WriteLine("Press c to get categories");
-                Console.WriteLine("Press r to get random jokes");
-                key = Console.ReadKey().KeyChar;
-                if (key == 'c')
-                {
-                    getCategories();
-                    PrintResults();
-                }
-                if (key == 'r')
-                {
-                    Console.WriteLine("Want to use a random name? y/n");
-                    key = Console.ReadKey().KeyChar;
-                    if (key == 'y')
-                        GetNames();
-                    Console.WriteLine("Want to specify a category? y/n");
-                    if (key == 'y')
-                    {
-                        Console.WriteLine("How many jokes do you want? (1-9)");
-                        int n = Int32.Parse(Console.ReadLine());
-                        Console.WriteLine("Enter a category;");
-                        GetRandomJokes(Console.ReadLine(), n);
-                        PrintResults();
-                    }
-                    else
-                    {
-                        Console.WriteLine("How many jokes do you want? (1-9)");
-                        int n = Int32.Parse(Console.ReadLine());
-                        GetRandomJokes(null, n);
-                        PrintResults();
-                    }
-                }
-                names = null;
+                menuMethods[menuIndex]();
             }
+            Console.WriteLine("Goodbye");
         }
 
         private static void GetCategories()
@@ -77,7 +54,20 @@ namespace ConsoleApp1
             List<string> validInputs = new List<string>() { "y", "n" };
             string userInput = getUserInput(validInputs);
             if (userInput != "")
+            {
                 usesRandomName = userInput == "y" ? true : false;
+                menuIndex++;
+            }
+
+        }
+
+        private static void mGetNames()
+        {
+            if (!usesRandomName) return;
+            new JsonFeed("http://uinames.com/api/", 0);
+            dynamic result = JsonFeed.Getnames();
+            names = Tuple.Create(result.name.ToString(), result.surname.ToString());
+            menuIndex++;
         }
 
         private static void mUseCategory()
@@ -86,7 +76,10 @@ namespace ConsoleApp1
             List<string> validInputs = new List<string>() { "y", "n" };
             string userInput = getUserInput(validInputs);
             if (userInput != "")
+            {
                 usesCategory = userInput == "y" ? true : false;
+                menuIndex++;
+            }
         }
 
         private static void mSelectCategory()
@@ -97,16 +90,22 @@ namespace ConsoleApp1
             List<string> validInputs = getRangeList(jokeCategories.Count());
             string userInput = getUserInput(validInputs);
             if (userInput != "")
-                category = validInputs[Int32.Parse(userInput)];
-        }
+            {
+                category = jokeCategories[Int32.Parse(userInput)-1];
+                menuIndex++;
+            }
+    }
 
         private static void mSelectJokeQuantity()
         {
             Console.WriteLine("How many jokes do you want? (1-9): ");
-            List<string> validInputs = new List<string>() { "y", "n" };
+            List<string> validInputs = getRangeList(9);
             string userInput = getUserInput(validInputs);
             if (userInput != "")
+            {
                 jokeQuantity = Int32.Parse(userInput);
+                menuIndex++;
+            }
         }
 
         private static void mPrintJokes()
@@ -114,7 +113,19 @@ namespace ConsoleApp1
             new JsonFeed("https://api.chucknorris.io", jokeQuantity);
             results = JsonFeed.GetRandomJokes(names?.Item1, names?.Item2, category);
             Console.WriteLine("[" + string.Join(",", results) + "]");
+            menuIndex++;
+        }
 
+        private static void mContinue()
+        {
+            Console.WriteLine("Want to get more jokes? y/n: ");
+            List<string> validInputs = new List<string>() { "y", "n" };
+            string userInput = getUserInput(validInputs);
+            if (userInput != "")
+            {
+                wantsMoreJokes = userInput == "y" ? true : false;
+                menuIndex = 0;
+            }
         }
 
         private static List<string> getRangeList(int maxVal)
@@ -132,7 +143,7 @@ namespace ConsoleApp1
             int counter = 0;
             foreach (string category in jokeCategories)
             {
-                Console.WriteLine($"{counter++}. {category}");
+                Console.WriteLine($"{++counter}. {category}");
             }
         }
 
@@ -152,30 +163,6 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Invalid input.");
             return "";
-        }
-
-        private static void PrintResults()
-        {
-            Console.WriteLine("[" + string.Join(",", results) + "]");
-        }
-
-        private static void GetRandomJokes(string category, int number)
-        {
-            new JsonFeed("https://api.chucknorris.io", number);
-            results = JsonFeed.GetRandomJokes(names?.Item1, names?.Item2, category);
-        }
-
-        private static void getCategories()
-        {
-            new JsonFeed("https://api.chucknorris.io", 0);
-            results = JsonFeed.GetCategories();
-        }
-
-        private static void GetNames()
-        {
-            new JsonFeed("http://uinames.com/api/", 0);
-            dynamic result = JsonFeed.Getnames();
-            names = Tuple.Create(result.name.ToString(), result.surname.ToString());
         }
     }
 }
