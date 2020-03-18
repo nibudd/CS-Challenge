@@ -33,7 +33,6 @@ namespace ConsoleApp1
 
         static void Main(string[] args)
         {
-            GetNames();
             GetCategories();
             MakeInputDictionaries();
             MakeMenuItems();
@@ -56,7 +55,10 @@ namespace ConsoleApp1
                 usesRandomName = yesNoInputDict[menuUseRandomName.GetInput()];
 
                 if (usesRandomName)
+                {
+                    GetNames();
                     ChangeName();
+                }
 
                 menuChooseQuantity.Execute();
                 jokeQuantity = oneToNineInputDict[menuChooseQuantity.GetInput()];
