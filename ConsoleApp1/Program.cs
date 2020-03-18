@@ -17,48 +17,108 @@ namespace ConsoleApp1
         static bool usesRandomName = false;
         static bool usesCategory = false;
         static List<string> jokeCategories;
-        static string category;
+        static string jokeCategory;
         static int jokeQuantity;
         static bool wantsMoreJokes = true;
         static JsonFeed chuckNorrisFeed = new JsonFeed("https://api.chucknorris.io");
         static JsonFeed namesFeed = new JsonFeed("http://uinames.com/api/");
+        private static MenuItem menuUseRandomName;
+        private static MenuItem menuUseCategory;
+        private static MenuItem menuChooseCategory;
+        private static MenuItem menuChooseQuantity;
+        private static MenuItem menuKeepRunning;
+        private static Dictionary<string, bool> yesNoInputDict;
+        private static Dictionary<string, int> oneToNineInputDict;
+        private static Dictionary<string, string> categoriesInputDict;
 
         static void Main(string[] args)
         {
             GetCategories();
-            menuMethods.Add(mUseRandomName);
-            menuMethods.Add(mGetNames);
-            menuMethods.Add(mUseCategory);
-            menuMethods.Add(mSelectCategory);
-            menuMethods.Add(mSelectJokeQuantity);
-            menuMethods.Add(mPrintJokes);
-            menuMethods.Add(mContinue);
+            mGetNames();
+            MakeInputDictionaries();
+            MakeMenuItems();
 
             Console.WriteLine("JOKE GENERATOR\n");
             while (wantsMoreJokes)
             {
-                menuMethods[menuIndex]();
+                menuUseCategory.Execute();
+                usesCategory = yesNoInputDict[menuUseCategory.GetInput()];
+                
+                if (usesCategory)
+                {
+                    menuChooseCategory.Execute();
+                    jokeCategory = categoriesInputDict[menuChooseCategory.GetInput()];
+                }
+
+                menuUseRandomName.Execute();
+                usesRandomName = yesNoInputDict[menuUseRandomName.GetInput()];
+
+                menuChooseQuantity.Execute();
+                jokeQuantity = oneToNineInputDict[menuChooseQuantity.GetInput()];
+
+                mPrintJokes();
+
+                menuKeepRunning.Execute();
+                wantsMoreJokes = yesNoInputDict[menuKeepRunning.GetInput()];
+                
             }
             Console.WriteLine("Goodbye");
+        }
+
+        private static void MakeMenuItems()
+        {
+            menuUseRandomName = new MenuItem(
+                "Use random name? y/n: ", new List<string>(yesNoInputDict.Keys));
+
+            menuUseCategory = new MenuItem(
+                "Specify a category? y/n: ", new List<string>(yesNoInputDict.Keys));
+
+            string chooseCategoryString = CategoriesToString() + "Select a category: ";
+            menuChooseCategory = new MenuItem(
+                chooseCategoryString, new List<string>(categoriesInputDict.Keys));
+
+            menuChooseQuantity = new MenuItem(
+                "Number of jokes? 1-9: ", new List<string>(oneToNineInputDict.Keys));
+
+            menuKeepRunning = new MenuItem(
+                "Run again? y/n: ", new List<string>(yesNoInputDict.Keys));
+        }
+
+        private static void MakeInputDictionaries()
+        {
+            yesNoInputDict = makeYesNoDict();
+            oneToNineInputDict = makeOneToNineDict();
+            categoriesInputDict = makeCategoriesDict();
+        }
+
+        private static Dictionary<string, string> makeCategoriesDict()
+        {
+            Dictionary<string, string> categoriesInputDict = new Dictionary<string, string>();
+            foreach (int x in Enumerable.Range(1, jokeCategories.Count()))
+                categoriesInputDict[x.ToString()] = jokeCategories[x - 1];
+            return categoriesInputDict;
+        }
+
+        private static Dictionary<string, int> makeOneToNineDict()
+        {
+            Dictionary<string, int> oneToNineInputDict = new Dictionary<string, int>();
+            foreach (int x in Enumerable.Range(1, 9))
+                oneToNineInputDict[x.ToString()] = x;
+            return oneToNineInputDict;
+        }
+
+        private static Dictionary<string, bool> makeYesNoDict()
+        {
+            Dictionary<string, bool> yesNoInputDict = new Dictionary<string, bool>();
+            yesNoInputDict["y"] = true;
+            yesNoInputDict["n"] = false;
+            return yesNoInputDict;
         }
 
         private static void GetCategories()
         {
             string[] result = chuckNorrisFeed.GetResponse<string[]>("jokes/categories");
             jokeCategories = new List<string>(result);
-        }
-
-        private static void mUseRandomName()
-        {
-            Console.Write("Want to use a random name? y/n: ");
-            List<string> validInputs = new List<string>() { "y", "n" };
-            string userInput = getUserInput(validInputs);
-            if (userInput != "")
-            {
-                usesRandomName = userInput == "y" ? true : false;
-                menuIndex++;
-            }
-
         }
 
         private static void mGetNames()
@@ -69,86 +129,25 @@ namespace ConsoleApp1
             menuIndex++;
         }
 
-        private static void mUseCategory()
-        {
-            Console.Write("Want to select a category? y/n: ");
-            List<string> validInputs = new List<string>() { "y", "n" };
-            string userInput = getUserInput(validInputs);
-            if (userInput != "")
-            {
-                usesCategory = userInput == "y" ? true : false;
-                menuIndex++;
-            }
-        }
-
-        private static void mSelectCategory()
-        {
-            if (!usesCategory) return;
-            printCategories();
-            Console.Write("Enter category number: ");
-            List<string> validInputs = getRangeList(jokeCategories.Count());
-            string userInput = getUserInput(validInputs);
-            if (userInput != "")
-            {
-                category = jokeCategories[Int32.Parse(userInput)-1];
-                menuIndex++;
-            }
-    }
-
-        private static void mSelectJokeQuantity()
-        {
-            Console.Write("How many jokes do you want? (1-9): ");
-            List<string> validInputs = getRangeList(9);
-            string userInput = getUserInput(validInputs);
-            if (userInput != "")
-            {
-                jokeQuantity = Int32.Parse(userInput);
-                menuIndex++;
-            }
-        }
-
         private static void mPrintJokes()
         {
             string url = "jokes/random";
             if (usesCategory)
-                url += $"?category={category}";
+                url += $"?category={jokeCategory}";
             Newtonsoft.Json.Linq.JObject result = chuckNorrisFeed.GetResponse<Newtonsoft.Json.Linq.JObject>(url);
             string joke = result.Value<string>("value");
             Console.WriteLine("[" + string.Join(",", result) + "]");
             menuIndex++;
         }
 
-        private static void mContinue()
+        private static string CategoriesToString()
         {
-            Console.Write("Want to get more jokes? y/n: ");
-            List<string> validInputs = new List<string>() { "y", "n" };
-            string userInput = getUserInput(validInputs);
-            if (userInput != "")
-            {
-                wantsMoreJokes = userInput == "y" ? true : false;
-                menuIndex = 0;
-            }
-        }
-
-        private static List<string> getRangeList(int maxVal)
-        {
-            string[] numArray = new string[maxVal];
-            foreach (int x in Enumerable.Range(1, maxVal))
-            {
-                numArray[x - 1] = x.ToString();
-            }
-            return new List<string>(numArray);
-        }
-
-        private static void printCategories()
-        {
+            string categoriesString = "";
             int counter = 0;
             foreach (string category in jokeCategories)
-            {
-                Console.WriteLine($"{++counter}. {category}");
-            }
+                categoriesString += $"{++counter}. {category}\n";
+            return categoriesString;
         }
-
 
         private static string getUserInput(List<string> validInputs)
         {

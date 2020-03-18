@@ -3,18 +3,17 @@ using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
-	public abstract class MenuItem
+	public class MenuItem
 	{
 		private string promptText;
 		private string userInput;
-		private Dictionary<string, object> validInputDict;
-		private object result;
+		private List<string> validInput;
 		private bool itemCompleted;
 
-		public MenuItem(string promptText, Dictionary<string, object> validInputDict)
+		public MenuItem(string promptText, List<string> validInput)
 		{
 			this.promptText = promptText;
-			this.validInputDict = validInputDict;
+			this.validInput = validInput;
 			itemCompleted = false;
 		}
 
@@ -26,16 +25,13 @@ namespace ConsoleApp1
 				PrintPrompt();
 				GetUserInput();
 				if (IsValidInput())
-				{
-					InterpretInput();
 					itemCompleted = true;
-				}
 			}
 		}
 
-		private object GetResult()
+		public string GetInput()
 		{
-			return result;
+			return userInput;
 		}
 
 		private void PrintPrompt()
@@ -47,20 +43,10 @@ namespace ConsoleApp1
 		private void GetUserInput()
 		{
 			string userInput = Console.ReadLine();
-			if (GetValidInputs().Contains(userInput))
+			if (validInput.Contains(userInput))
 				this.userInput = userInput;
 			else
 				InvalidUserInput();
-		}
-
-		private void InterpretInput()
-		{
-			result = validInputDict[userInput];
-		}
-
-		private List<string> GetValidInputs()
-		{
-			return new List<string>(validInputDict.Keys);
 		}
 
 		private void InvalidUserInput()
