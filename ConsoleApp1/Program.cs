@@ -20,6 +20,8 @@ namespace ConsoleApp1
         static string category;
         static int jokeQuantity;
         static bool wantsMoreJokes = true;
+        static JsonFeed chuckNorrisFeed = new JsonFeed("https://api.chucknorris.io");
+        static JsonFeed namesFeed = new JsonFeed("http://uinames.com/api/");
 
         static void Main(string[] args)
         {
@@ -42,8 +44,7 @@ namespace ConsoleApp1
 
         private static void GetCategories()
         {
-            new JsonFeed("https://api.chucknorris.io", 0);
-            results = JsonFeed.GetCategories();
+            results = chuckNorrisFeed.GetCategories();
             jokeCategories = new List<string>(results);
         }
 
@@ -63,8 +64,7 @@ namespace ConsoleApp1
         private static void mGetNames()
         {
             if (!usesRandomName) return;
-            new JsonFeed("http://uinames.com/api/", 0);
-            dynamic result = JsonFeed.Getnames();
+            dynamic result = namesFeed.Getnames();
             names = Tuple.Create(result.name.ToString(), result.surname.ToString());
             menuIndex++;
         }
@@ -109,8 +109,7 @@ namespace ConsoleApp1
 
         private static void mPrintJokes()
         {
-            new JsonFeed("https://api.chucknorris.io", jokeQuantity);
-            results = JsonFeed.GetRandomJokes(names?.Item1, names?.Item2, category);
+            results = chuckNorrisFeed.GetRandomJokes(names?.Item1, names?.Item2, category);
             Console.WriteLine("[" + string.Join(",", results) + "]");
             menuIndex++;
         }
