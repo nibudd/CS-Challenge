@@ -36,14 +36,14 @@ namespace ConsoleApp1
             Console.WriteLine("JOKE GENERATOR\n");
             while (wantsMoreJokes)
             {
-                RunMenuItem<bool>(menuUseCategory, yesNoInputDict, usesCategory);
+                usesCategory = RunMenuItem<bool>(menuUseCategory, yesNoInputDict);
                 
                 if (usesCategory)
-                    RunMenuItem<string>(menuChooseCategory, categoriesInputDict, jokeCategory);
+                    jokeCategory = RunMenuItem<string>(menuChooseCategory, categoriesInputDict);
 
                 GetJokes();
 
-                RunMenuItem<bool>(menuUseRandomName, yesNoInputDict, usesRandomName);
+                usesRandomName = RunMenuItem<bool>(menuUseRandomName, yesNoInputDict);
 
                 if (usesRandomName)
                 {
@@ -51,19 +51,19 @@ namespace ConsoleApp1
                     ChangeName();
                 }
 
-                RunMenuItem<int>(menuChooseQuantity, oneToNineInputDict, jokeQuantity);
+                jokeQuantity = RunMenuItem<int>(menuChooseQuantity, oneToNineInputDict);
                 
                 PrintJokes();
 
-                RunMenuItem<bool>(menuKeepRunning, yesNoInputDict, wantsMoreJokes);
+                wantsMoreJokes = RunMenuItem<bool>(menuKeepRunning, yesNoInputDict);
             }
             Console.WriteLine("Goodbye");
         }
 
-        private static void RunMenuItem<T>(MenuItem menuItem, Dictionary<string, T> inputDict, T saveTo)
+        private static T RunMenuItem<T>(MenuItem menuItem, Dictionary<string, T> inputDict)
         {
             menuItem.Execute();
-            saveTo = inputDict[menuItem.GetInput()];
+            return inputDict[menuItem.GetInput()];
         }
 
         private static void ChangeName()
@@ -98,6 +98,7 @@ namespace ConsoleApp1
                 string newJoke = jokes[index];
                 newJoke = newJoke.Replace("Chuck's", name_possessive);
                 newJoke = newJoke.Replace("Norris'", surname_possessive);
+                newJoke = newJoke.Replace("Norris's", surname_possessive);
                 newJoke = newJoke.Replace("Chuck", name);
                 newJoke = newJoke.Replace("Norris", surname);
                 if (isFemale)
