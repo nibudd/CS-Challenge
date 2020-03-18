@@ -1,11 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ConsoleApp1
 {
@@ -40,19 +36,14 @@ namespace ConsoleApp1
             Console.WriteLine("JOKE GENERATOR\n");
             while (wantsMoreJokes)
             {
-                menuUseCategory.Execute();
-                usesCategory = yesNoInputDict[menuUseCategory.GetInput()];
+                RunMenuItem<bool>(menuUseCategory, yesNoInputDict, usesCategory);
                 
                 if (usesCategory)
-                {
-                    menuChooseCategory.Execute();
-                    jokeCategory = categoriesInputDict[menuChooseCategory.GetInput()];
-                }
+                    RunMenuItem<string>(menuChooseCategory, categoriesInputDict, jokeCategory);
 
                 GetJokes();
 
-                menuUseRandomName.Execute();
-                usesRandomName = yesNoInputDict[menuUseRandomName.GetInput()];
+                RunMenuItem<bool>(menuUseRandomName, yesNoInputDict, usesRandomName);
 
                 if (usesRandomName)
                 {
@@ -60,16 +51,19 @@ namespace ConsoleApp1
                     ChangeName();
                 }
 
-                menuChooseQuantity.Execute();
-                jokeQuantity = oneToNineInputDict[menuChooseQuantity.GetInput()];
-
+                RunMenuItem<int>(menuChooseQuantity, oneToNineInputDict, jokeQuantity);
+                
                 PrintJokes();
 
-                menuKeepRunning.Execute();
-                wantsMoreJokes = yesNoInputDict[menuKeepRunning.GetInput()];
-                
+                RunMenuItem<bool>(menuKeepRunning, yesNoInputDict, wantsMoreJokes);
             }
             Console.WriteLine("Goodbye");
+        }
+
+        private static void RunMenuItem<T>(MenuItem menuItem, Dictionary<string, T> inputDict, T saveTo)
+        {
+            menuItem.Execute();
+            saveTo = inputDict[menuItem.GetInput()];
         }
 
         private static void ChangeName()
