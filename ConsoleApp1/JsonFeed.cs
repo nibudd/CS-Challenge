@@ -17,31 +17,6 @@ namespace ConsoleApp1
 			client = new HttpClient();
 			client.BaseAddress = new Uri(uri);
 		}
-        
-		public string[] GetRandomJokes(string firstname, string lastname, string category)
-		{
-			string url = "jokes/random";
-			if (category != null)
-			{
-				if (url.Contains('?'))
-					url += "&";
-				else url += "?";
-				url += "category=";
-				url += category;
-			}
-
-            string joke = client.GetStringAsync(url).Result;
-
-            if (firstname != null && lastname != null)
-            {
-                int index = joke.IndexOf("Chuck Norris");
-                string firstPart = joke.Substring(0, index);
-                string secondPart = joke.Substring(0 + index + "Chuck Norris".Length, joke.Length - (index + "Chuck Norris".Length));
-                joke = firstPart + firstname + " " + lastname + secondPart;
-            }
-
-            return new string[] { JsonConvert.DeserializeObject<dynamic>(joke).value };
-        }
 
         public dynamic GetResponse(string url)
 		{
