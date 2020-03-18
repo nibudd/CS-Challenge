@@ -7,7 +7,6 @@ namespace ConsoleApp1
 {
     class Program
     {
-        private static dynamic nameData;
         static bool usesRandomName = false;
         static bool usesCategory = false;
         static List<string> jokeCategories;
@@ -16,7 +15,6 @@ namespace ConsoleApp1
         static int maxQuantity = 9;
         static bool wantsMoreJokes = true;
         static JsonFeed chuckNorrisFeed = new JsonFeed("https://api.chucknorris.io");
-        static JsonFeed namesFeed = new JsonFeed("http://uinames.com/api/");
         private static MenuItem menuUseRandomName;
         private static MenuItem menuUseCategory;
         private static MenuItem menuChooseCategory;
@@ -26,6 +24,7 @@ namespace ConsoleApp1
         private static Dictionary<string, int> oneToNineInputDict;
         private static Dictionary<string, string> categoriesInputDict;
         private static List<string> jokes;
+        private static NameSwapper nameSwapper = new NameSwapper("Chuck", "Norris", "male");
 
         static void Main(string[] args)
         {
@@ -47,8 +46,8 @@ namespace ConsoleApp1
 
                 if (usesRandomName)
                 {
-                    GetNames();
-                    ChangeName();
+                    nameSwapper.GetNames();
+                    nameSwapper.ChangeName(jokes);
                 }
 
                 jokeQuantity = RunMenuItem<int>(menuChooseQuantity, oneToNineInputDict);
@@ -64,48 +63,6 @@ namespace ConsoleApp1
         {
             menuItem.Execute();
             return inputDict[menuItem.GetInput()];
-        }
-
-        private static void ChangeName()
-        {
-            bool isFemale = nameData.gender == "female" ? true : false;
-            Dictionary<string, string> pronouns = new Dictionary<string, string>();
-            if (isFemale)
-            {
-                pronouns[" his "] = " hers ";
-                pronouns[" he "] = " she ";
-                pronouns[" him "] = " her ";
-                pronouns[" His "] = " Hers ";
-                pronouns[" He "] = " She ";
-                pronouns[" him."] = " her.";
-                pronouns[" his."] = " hers.";
-            }
-
-            string name = nameData.name;
-            string surname = nameData.surname;
-
-            string name_possessive = name + "'";
-            if (!name.EndsWith("s"))
-                name_possessive += "s";
-
-            string surname_possessive = surname + "'";
-            if (!surname.EndsWith("s"))
-                surname_possessive += "s";
-
-
-            foreach (int index in Enumerable.Range(0, jokes.Count()))
-            {
-                string newJoke = jokes[index];
-                newJoke = newJoke.Replace("Chuck's", name_possessive);
-                newJoke = newJoke.Replace("Norris'", surname_possessive);
-                newJoke = newJoke.Replace("Norris's", surname_possessive);
-                newJoke = newJoke.Replace("Chuck", name);
-                newJoke = newJoke.Replace("Norris", surname);
-                if (isFemale)
-                    foreach (KeyValuePair<string, string> p in pronouns)
-                        newJoke = newJoke.Replace(p.Key, p.Value);
-                jokes[index] = newJoke;
-            }
         }
 
         private static void GetJokes()
@@ -183,11 +140,6 @@ namespace ConsoleApp1
         {
             JArray result = chuckNorrisFeed.GetResponse("jokes/categories");
             jokeCategories = result.ToObject<List<string>>();
-        }
-
-        private static void GetNames()
-        {
-            nameData = namesFeed.GetResponse("");
         }
 
         private static string CategoriesToString()
