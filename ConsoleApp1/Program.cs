@@ -5,12 +5,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ConsoleApp1
 {
     class Program
     {
-        static Tuple<string, string> names;
+        private static dynamic nameData;
         static bool usesRandomName = false;
         static bool usesCategory = false;
         static List<string> jokeCategories;
@@ -54,6 +55,9 @@ namespace ConsoleApp1
                 menuUseRandomName.Execute();
                 usesRandomName = yesNoInputDict[menuUseRandomName.GetInput()];
 
+                if (usesRandomName)
+                    ChangeName();
+
                 menuChooseQuantity.Execute();
                 jokeQuantity = oneToNineInputDict[menuChooseQuantity.GetInput()];
 
@@ -66,6 +70,43 @@ namespace ConsoleApp1
             Console.WriteLine("Goodbye");
         }
 
+        private static void ChangeName()
+        {
+            bool isFemale = nameData.gender == "female" ? true : false;
+            Dictionary<string, string> pronouns = new Dictionary<string, string>();
+            if (isFemale)
+            {
+                pronouns["his"] = "hers";
+                pronouns["he"] = "she";
+                pronouns["him"] = "her";
+            }
+
+            string name = nameData.name;
+            string surname = nameData.surname;
+
+            string name_possessive = name + "'";
+            if (!name.EndsWith("s"))
+                name_possessive += "s";
+
+            string surname_possessive = surname + "'";
+            if (!surname.EndsWith("s"))
+                surname_possessive += "s";
+
+
+            foreach (int index in Enumerable.Range(0, jokes.Count()-1))
+            {
+                string newJoke = jokes[index];
+                newJoke = newJoke.Replace("Chuck's", name_possessive);
+                newJoke = newJoke.Replace("Norris'", surname_possessive);
+                newJoke = newJoke.Replace("Chuck", name);
+                newJoke = newJoke.Replace("Norris", surname);
+                if (isFemale)
+                    foreach (KeyValuePair<string, string> p in pronouns)
+                        newJoke = newJoke.Replace(p.Key, p.Value);
+                jokes[index] = newJoke;
+            }
+        }
+
         private static void GetJokes()
         {
             jokes = new List<string>();
@@ -75,8 +116,7 @@ namespace ConsoleApp1
 
             foreach (int _ in Enumerable.Range(1, maxQuantity))
             {
-                Newtonsoft.Json.Linq.JObject result = 
-                    chuckNorrisFeed.GetResponse<Newtonsoft.Json.Linq.JObject>(url);
+                JObject result = chuckNorrisFeed.GetResponse(url);
                 jokes.Add(result.Value<string>("value"));
             }
 
@@ -140,15 +180,13 @@ namespace ConsoleApp1
 
         private static void GetCategories()
         {
-            string[] result = chuckNorrisFeed.GetResponse<string[]>("jokes/categories");
-            jokeCategories = new List<string>(result);
+            JArray result = chuckNorrisFeed.GetResponse("jokes/categories");
+            jokeCategories = result.ToObject<List<string>>();
         }
 
         private static void GetNames()
         {
-            if (!usesRandomName) return;
-            Dictionary<string, string> result = namesFeed.GetResponse<Dictionary<string, string>>("");
-            names = Tuple.Create(result["name"], result["surname"]);
+            nameData = namesFeed.GetResponse("");
         }
 
         private static string CategoriesToString()

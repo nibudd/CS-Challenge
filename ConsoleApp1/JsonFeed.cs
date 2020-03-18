@@ -43,10 +43,10 @@ namespace ConsoleApp1
             return new string[] { JsonConvert.DeserializeObject<dynamic>(joke).value };
         }
 
-        public dynamic GetResponse<T>(string url)
+        public dynamic GetResponse(string url)
 		{
 			string resultJson = client.GetStringAsync(url).Result;
-			return JsonConvert.DeserializeObject<T>(resultJson);
+			return JsonConvert.DeserializeObject(resultJson);
 		}
 
 
