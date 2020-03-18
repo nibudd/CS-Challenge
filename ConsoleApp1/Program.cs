@@ -78,9 +78,13 @@ namespace ConsoleApp1
             Dictionary<string, string> pronouns = new Dictionary<string, string>();
             if (isFemale)
             {
-                pronouns["his"] = "hers";
-                pronouns["he"] = "she";
-                pronouns["him"] = "her";
+                pronouns[" his "] = " hers ";
+                pronouns[" he "] = " she ";
+                pronouns[" him "] = " her ";
+                pronouns[" His "] = " Hers ";
+                pronouns[" He "] = " She ";
+                pronouns[" him."] = " her.";
+                pronouns[" his."] = " hers.";
             }
 
             string name = nameData.name;
@@ -151,12 +155,12 @@ namespace ConsoleApp1
 
         private static void MakeInputDictionaries()
         {
-            yesNoInputDict = makeYesNoDict();
-            oneToNineInputDict = makeOneToNineDict();
-            categoriesInputDict = makeCategoriesDict();
+            yesNoInputDict = MakeYesNoDict();
+            oneToNineInputDict = MakeOneToNineDict();
+            categoriesInputDict = MakeCategoriesDict();
         }
 
-        private static Dictionary<string, string> makeCategoriesDict()
+        private static Dictionary<string, string> MakeCategoriesDict()
         {
             Dictionary<string, string> categoriesInputDict = new Dictionary<string, string>();
             foreach (int x in Enumerable.Range(1, jokeCategories.Count()))
@@ -164,7 +168,7 @@ namespace ConsoleApp1
             return categoriesInputDict;
         }
 
-        private static Dictionary<string, int> makeOneToNineDict()
+        private static Dictionary<string, int> MakeOneToNineDict()
         {
             Dictionary<string, int> oneToNineInputDict = new Dictionary<string, int>();
             foreach (int x in Enumerable.Range(1, 9))
@@ -172,7 +176,7 @@ namespace ConsoleApp1
             return oneToNineInputDict;
         }
 
-        private static Dictionary<string, bool> makeYesNoDict()
+        private static Dictionary<string, bool> MakeYesNoDict()
         {
             Dictionary<string, bool> yesNoInputDict = new Dictionary<string, bool>();
             yesNoInputDict["y"] = true;
