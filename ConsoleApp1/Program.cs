@@ -99,7 +99,7 @@ namespace ConsoleApp1
                 surname_possessive += "s";
 
 
-            foreach (int index in Enumerable.Range(0, jokes.Count()-1))
+            foreach (int index in Enumerable.Range(0, jokes.Count()))
             {
                 string newJoke = jokes[index];
                 newJoke = newJoke.Replace("Chuck's", name_possessive);
@@ -163,8 +163,8 @@ namespace ConsoleApp1
         private static Dictionary<string, string> MakeCategoriesDict()
         {
             Dictionary<string, string> categoriesInputDict = new Dictionary<string, string>();
-            foreach (int x in Enumerable.Range(1, jokeCategories.Count()))
-                categoriesInputDict[x.ToString()] = jokeCategories[x - 1];
+            foreach (int x in Enumerable.Range(0, jokeCategories.Count()))
+                categoriesInputDict[(x+1).ToString()] = jokeCategories[x];
             return categoriesInputDict;
         }
 
