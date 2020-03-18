@@ -12,7 +12,6 @@ namespace ConsoleApp1
     {
 		private HttpClient client;
 
-        public JsonFeed() { }
         public JsonFeed(string uri)
         {
 			client = new HttpClient();
@@ -60,5 +59,13 @@ namespace ConsoleApp1
 			string resultJSON = client.GetStringAsync("jokes/categories").Result;
 			return JsonConvert.DeserializeObject<string[]>(resultJSON);
 		}
+
+		public dynamic GetResponse<T>(string url)
+		{
+			string resultJson = client.GetStringAsync(url).Result;
+			return JsonConvert.DeserializeObject<T>(resultJson);
+		}
+
+
     }
 }
