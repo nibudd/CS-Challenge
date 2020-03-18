@@ -43,24 +43,7 @@ namespace ConsoleApp1
             return new string[] { JsonConvert.DeserializeObject<dynamic>(joke).value };
         }
 
-        /// <summary>
-        /// returns an object that contains name and surname
-        /// </summary>
-        /// <param name="client2"></param>
-        /// <returns></returns>
-		public dynamic Getnames()	
-		{
-			var result = client.GetStringAsync("").Result;
-			return JsonConvert.DeserializeObject<dynamic>(result);
-		}
-
-		public string[] GetCategories()
-		{
-			string resultJSON = client.GetStringAsync("jokes/categories").Result;
-			return JsonConvert.DeserializeObject<string[]>(resultJSON);
-		}
-
-		public dynamic GetResponse<T>(string url)
+        public dynamic GetResponse<T>(string url)
 		{
 			string resultJson = client.GetStringAsync(url).Result;
 			return JsonConvert.DeserializeObject<T>(resultJson);

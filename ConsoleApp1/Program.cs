@@ -44,8 +44,8 @@ namespace ConsoleApp1
 
         private static void GetCategories()
         {
-            results = chuckNorrisFeed.GetCategories();
-            jokeCategories = new List<string>(results);
+            string[] result = chuckNorrisFeed.GetResponse<string[]>("jokes/categories");
+            jokeCategories = new List<string>(result);
         }
 
         private static void mUseRandomName()
@@ -64,8 +64,8 @@ namespace ConsoleApp1
         private static void mGetNames()
         {
             if (!usesRandomName) return;
-            dynamic result = namesFeed.Getnames();
-            names = Tuple.Create(result.name.ToString(), result.surname.ToString());
+            Dictionary<string, string> result = namesFeed.GetResponse<Dictionary<string, string>>("");
+            names = Tuple.Create(result["name"], result["surname"]);
             menuIndex++;
         }
 
@@ -109,8 +109,12 @@ namespace ConsoleApp1
 
         private static void mPrintJokes()
         {
-            results = chuckNorrisFeed.GetRandomJokes(names?.Item1, names?.Item2, category);
-            Console.WriteLine("[" + string.Join(",", results) + "]");
+            string url = "jokes/random";
+            if (usesCategory)
+                url += $"?category={category}";
+            Newtonsoft.Json.Linq.JObject result = chuckNorrisFeed.GetResponse<Newtonsoft.Json.Linq.JObject>(url);
+            string joke = result.Value<string>("value");
+            Console.WriteLine("[" + string.Join(",", result) + "]");
             menuIndex++;
         }
 
