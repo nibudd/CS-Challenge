@@ -10,15 +10,13 @@ namespace ConsoleApp1
 {
     class Program
     {
-        static string[] results = new string[50];
         static Tuple<string, string> names;
-        static List<Action> menuMethods = new List<Action>();
-        static int menuIndex = 0;
         static bool usesRandomName = false;
         static bool usesCategory = false;
         static List<string> jokeCategories;
         static string jokeCategory;
         static int jokeQuantity;
+        static int maxQuantity = 9;
         static bool wantsMoreJokes = true;
         static JsonFeed chuckNorrisFeed = new JsonFeed("https://api.chucknorris.io");
         static JsonFeed namesFeed = new JsonFeed("http://uinames.com/api/");
@@ -30,11 +28,12 @@ namespace ConsoleApp1
         private static Dictionary<string, bool> yesNoInputDict;
         private static Dictionary<string, int> oneToNineInputDict;
         private static Dictionary<string, string> categoriesInputDict;
+        private static List<string> jokes;
 
         static void Main(string[] args)
         {
+            GetNames();
             GetCategories();
-            mGetNames();
             MakeInputDictionaries();
             MakeMenuItems();
 
@@ -50,19 +49,43 @@ namespace ConsoleApp1
                     jokeCategory = categoriesInputDict[menuChooseCategory.GetInput()];
                 }
 
+                GetJokes();
+
                 menuUseRandomName.Execute();
                 usesRandomName = yesNoInputDict[menuUseRandomName.GetInput()];
 
                 menuChooseQuantity.Execute();
                 jokeQuantity = oneToNineInputDict[menuChooseQuantity.GetInput()];
 
-                mPrintJokes();
+                PrintJokes();
 
                 menuKeepRunning.Execute();
                 wantsMoreJokes = yesNoInputDict[menuKeepRunning.GetInput()];
                 
             }
             Console.WriteLine("Goodbye");
+        }
+
+        private static void GetJokes()
+        {
+            jokes = new List<string>();
+            string url = "jokes/random";
+            if (usesCategory)
+                url += $"?category={jokeCategory}";
+
+            foreach (int _ in Enumerable.Range(1, maxQuantity))
+            {
+                Newtonsoft.Json.Linq.JObject result = 
+                    chuckNorrisFeed.GetResponse<Newtonsoft.Json.Linq.JObject>(url);
+                jokes.Add(result.Value<string>("value"));
+            }
+
+        }
+
+        private static void PrintJokes()
+        {
+            foreach (int x in Enumerable.Range(1, jokeQuantity))
+                Console.WriteLine($"{x}. {jokes[x - 1]}");
         }
 
         private static void MakeMenuItems()
@@ -121,23 +144,11 @@ namespace ConsoleApp1
             jokeCategories = new List<string>(result);
         }
 
-        private static void mGetNames()
+        private static void GetNames()
         {
             if (!usesRandomName) return;
             Dictionary<string, string> result = namesFeed.GetResponse<Dictionary<string, string>>("");
             names = Tuple.Create(result["name"], result["surname"]);
-            menuIndex++;
-        }
-
-        private static void mPrintJokes()
-        {
-            string url = "jokes/random";
-            if (usesCategory)
-                url += $"?category={jokeCategory}";
-            Newtonsoft.Json.Linq.JObject result = chuckNorrisFeed.GetResponse<Newtonsoft.Json.Linq.JObject>(url);
-            string joke = result.Value<string>("value");
-            Console.WriteLine("[" + string.Join(",", result) + "]");
-            menuIndex++;
         }
 
         private static string CategoriesToString()
@@ -147,23 +158,6 @@ namespace ConsoleApp1
             foreach (string category in jokeCategories)
                 categoriesString += $"{++counter}. {category}\n";
             return categoriesString;
-        }
-
-        private static string getUserInput(List<string> validInputs)
-        {
-            string userInput = Console.ReadLine();
-            if (validInputs.Contains(userInput))
-                return userInput;
-            else
-            {
-                return invalidUserInput();
-            }
-        }
-
-        private static string invalidUserInput()
-        {
-            Console.WriteLine("Invalid input.");
-            return "";
         }
     }
 }
