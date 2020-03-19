@@ -12,19 +12,8 @@ namespace ConsoleApp1
 			new JsonFeed("http://uinames.com/api/");
         private string oldFirst;
         private string oldLast;
-        private string oldGender;
         private string newFirst;
         private string newLast;
-        private string newGender;
-        private List<string> malePronouns = new List<string>()
-        {
-            " his ", " he ", " him ", " His ", " He ", " him.", " his."
-        };
-        private List<string> femalePronouns = new List<string>()
-        {
-            " hers ", " she ", " her ", " Hers ", " She ", " her.", " hers."
-        };
-        private Dictionary<string, string> pronounsDict;
         private string newFirstPossessive;
         private string newLastPossessive;
         private string oldFirstPossessive;
@@ -34,19 +23,16 @@ namespace ConsoleApp1
         {
             oldFirst = first;
             oldLast = second;
-            oldGender = gender;
             oldFirstPossessive = MakePossessives(oldFirst);
             oldLastPossessive = MakePossessives(oldLast);
         }
 
         public void GetNames()
 		{
-			JObject nameData = namesFeed.GetResponse("");
+			JObject nameData = namesFeed.GetResponse("?region=canada&gender=male");
             newFirst = nameData.Value<string>("name");
             newLast = nameData.Value<string>("surname");
-            newGender = nameData.Value<string>("gender");
 
-            MakePronounsDict();
             newFirstPossessive = MakePossessives(newFirst);
             newLastPossessive = MakePossessives(newLast);
         }
@@ -54,41 +40,9 @@ namespace ConsoleApp1
         public void ChangeName(List<string> strList)
         {
             for (int i = 0; i < strList.Count(); i++)
-            {
-                string str = strList[i];
-                str = SwapPronouns(str);
-                str = SwapNames(str);
-                strList[i] = str;
-            }
+                strList[i] = SwapNames(strList[i]);
         }
         
-        private void MakePronounsDict()
-        {
-            pronounsDict = new Dictionary<string, string>();
-            List<string> keys, vals;
-            if (oldGender == "male")
-            {
-                keys = malePronouns;
-                vals = femalePronouns;
-            }
-            else
-            {
-                keys = femalePronouns;
-                vals = malePronouns;
-            }
-
-            for (int i = 0; i < keys.Count(); i++)
-                pronounsDict[keys[i]] = vals[i];
-        }
-
-        private string SwapPronouns(string str)
-        {
-            if (oldGender != newGender)
-                foreach (KeyValuePair<string, string> p in pronounsDict)
-                    str = str.Replace(p.Key, p.Value);
-            return str;
-        }
-
         private string SwapNames(string str)
         {
             str = str.Replace(oldFirstPossessive, newFirstPossessive);
