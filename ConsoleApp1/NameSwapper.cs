@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
@@ -40,10 +41,10 @@ namespace ConsoleApp1
 
         public void GetNames()
 		{
-			dynamic nameData = namesFeed.GetResponse("");
-            newFirst = nameData.name;
-            newLast = nameData.surname;
-            newGender = nameData.gender;
+			JObject nameData = namesFeed.GetResponse("");
+            newFirst = nameData.Value<string>("name");
+            newLast = nameData.Value<string>("surname");
+            newGender = nameData.Value<string>("gender");
 
             MakePronounsDict();
             newFirstPossessive = MakePossessives(newFirst);
