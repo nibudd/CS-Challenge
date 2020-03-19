@@ -10,31 +10,22 @@ namespace ConsoleApp1
 	{
 		private JsonFeed namesFeed = 
 			new JsonFeed("http://uinames.com/api/");
-        private string oldFirst;
-        private string oldLast;
-        private string newFirst;
-        private string newLast;
-        private string newFirstPossessive;
-        private string newLastPossessive;
-        private string oldFirstPossessive;
-        private string oldLastPossessive;
+        private string oldName;
+        private string newName;
+        private string newPossessive;
+        private string oldPossessive;
 
-        public NameSwapper(string first, string second)
+        public NameSwapper(string oldName)
         {
-            oldFirst = first;
-            oldLast = second;
-            oldFirstPossessive = MakePossessives(oldFirst);
-            oldLastPossessive = MakePossessives(oldLast);
+            this.oldName = oldName;
+            oldPossessive = MakePossessives(this.oldName);
         }
 
         public void DownloadNames()
 		{
 			JObject nameData = namesFeed.GetResponse("?region=canada&gender=male");
-            newFirst = nameData.Value<string>("name");
-            newLast = nameData.Value<string>("surname");
-
-            newFirstPossessive = MakePossessives(newFirst);
-            newLastPossessive = MakePossessives(newLast);
+            newName = nameData.Value<string>("name") + " " + nameData.Value<string>("surname");
+            newPossessive = MakePossessives(newName);
         }
 
         public void ChangeName(List<string> strList)
@@ -45,10 +36,8 @@ namespace ConsoleApp1
         
         public string SwapNames(string str)
         {
-            str = str.Replace(oldFirstPossessive, newFirstPossessive);
-            str = str.Replace(oldLastPossessive, newLastPossessive);
-            str = str.Replace(oldFirst, newFirst);
-            str = str.Replace(oldLast, newLast);
+            str = str.Replace(oldPossessive, newPossessive);
+            str = str.Replace(oldName, newName);
             return str;
         }
 
