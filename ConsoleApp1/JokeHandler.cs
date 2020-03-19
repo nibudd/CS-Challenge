@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ConsoleApp1
 {
-	public class JokeHandler
+    public class JokeHandler
 	{
         private JsonFeed chuckNorrisFeed =
             new JsonFeed("https://api.chucknorris.io");
