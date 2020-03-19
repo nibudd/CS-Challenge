@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Sockets;
 
 namespace ConsoleApp1
 {
@@ -23,7 +25,9 @@ namespace ConsoleApp1
         private static JokeHandler jokeHandler = new JokeHandler();
         private static List<bool> trueFalseList;
         private static List<string> yesNoList;
+        private static List<string> tryAgainQuitList;
         private static List<int> numbersList;
+        private static MenuItem<bool> menuConnectivityProblem;
 
         static void Main(string[] args)
         {
@@ -54,6 +58,41 @@ namespace ConsoleApp1
 
             Teardown();
         }
+
+        private static T RunRequestMethod<T>(Func<T> method)
+        {
+            while (true)
+            {
+                try
+                {
+                    return method();
+                }
+                catch (AggregateException ae)
+                {
+                    ae.Handle(ex => RespondToPossibleExceptions(ex));
+                }
+                catch (Exception e)
+                {
+                    RespondToPossibleExceptions(e);
+                }
+            }
+        }
+
+        private static bool RespondToPossibleExceptions(Exception e)
+        {
+            bool tryAgain;
+            if (e is HttpRequestException || e is SocketException)
+            {
+                tryAgain = menuConnectivityProblem.Execute();
+                if (!tryAgain)
+                {
+                    Teardown();
+                    Environment.Exit(0);
+                }
+            }
+            return true;
+        }
+    
 
         private static void Teardown()
         {
@@ -94,8 +133,8 @@ namespace ConsoleApp1
 
         private static void MakeLists()
         {
-            trueFalseList = new List<bool>() { true, false };
-            yesNoList = new List<string>() { "yes", "no" };
+            trueFalseList = new List<bool> { true, false };
+            yesNoList = new List<string> { "yes", "no" };
             numbersList = new List<int>();
             for (int i = 1; i <= maxQuantity; i++)
                 numbersList.Add(i);
