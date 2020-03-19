@@ -3,61 +3,90 @@ using System.Collections.Generic;
 
 namespace ConsoleApp1
 {
-	public class MenuItem
+	public class MenuItem<T>
 	{
 		private string promptText;
-		private string userInput;
-		private List<string> validInput;
-		private bool itemCompleted;
+		private T userInput;
+		List<T> inputOptions;
+		List<string> printOptions;
+		private bool hasValidInput;
+		private bool showOptions;
 
-		public MenuItem(string promptText, List<string> validInput)
+		public MenuItem(string promptText, List<T> inputOptions)
 		{
 			this.promptText = promptText;
-			this.validInput = validInput;
-			itemCompleted = false;
+			this.inputOptions = inputOptions;
+			hasValidInput = false;
+			showOptions = true;
 		}
 
-		public void Execute()
+		public void SetPrintOptions(List<string> printOptions)
 		{
-			itemCompleted = false;
-			while (!itemCompleted)
+			this.printOptions = printOptions;
+		}
+
+		public void ShowPrintOptions(bool showOptions)
+		{
+			this.showOptions = showOptions;
+		}
+
+		public T Execute()
+		{
+			hasValidInput = false;
+			while (!hasValidInput)
 			{
 				PrintPrompt();
 				GetUserInput();
-				if (IsValidInput())
-					itemCompleted = true;
 			}
-		}
-
-		public string GetInput()
-		{
 			return userInput;
 		}
 
 		private void PrintPrompt()
 		{
-			if (promptText != "")
-				Console.Write(promptText);
+			if (showOptions)
+				PrintOptions();
+			Console.Write(promptText);
+		}
+
+		private void PrintOptions()
+		{
+			for (int i = 1; i <= inputOptions.Count; i++)
+			{
+				if (printOptions == null)
+					Console.WriteLine($"{i}. {inputOptions[i - 1]}");
+				else
+					Console.WriteLine($"{i}. {printOptions[i - 1]}");
+			}
 		}
 
 		private void GetUserInput()
 		{
-			string userInput = Console.ReadLine();
-			if (validInput.Contains(userInput))
-				this.userInput = userInput;
-			else
-				InvalidUserInput();
+			try
+			{
+				ValidateInput(Int32.Parse(Console.ReadLine()));
+			}
+			catch (FormatException)
+			{
+				InvalidInput();
+			}
 		}
 
-		private void InvalidUserInput()
+		private void ValidateInput(int numInput)
+		{
+			if (0 < numInput && numInput <= inputOptions.Count)
+			{
+				this.userInput = inputOptions[numInput - 1];
+				hasValidInput = true;
+			}
+			else
+				InvalidInput();
+
+		}
+
+		private void InvalidInput()
 		{
 			Console.WriteLine("Invalid input.");
-			userInput = "";
-		}
-
-		private bool IsValidInput()
-		{
-			return (userInput == "") ? false : true;
+			hasValidInput = false;
 		}
 	}
 }

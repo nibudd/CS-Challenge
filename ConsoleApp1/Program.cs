@@ -13,22 +13,21 @@ namespace ConsoleApp1
         static int jokeQuantity;
         static int maxQuantity = 9;
         static bool wantsMoreJokes = true;
-        private static MenuItem menuUseRandomName;
-        private static MenuItem menuUseCategory;
-        private static MenuItem menuChooseCategory;
-        private static MenuItem menuChooseQuantity;
-        private static MenuItem menuKeepRunning;
-        private static Dictionary<string, bool> yesNoInputDict;
-        private static Dictionary<string, int> oneToNineInputDict;
-        private static Dictionary<string, string> categoriesInputDict;
+        private static MenuItem<bool> menuUseRandomName;
+        private static MenuItem<bool> menuUseCategory;
+        private static MenuItem<string> menuChooseCategory;
+        private static MenuItem<int> menuChooseQuantity;
+        private static MenuItem<bool> menuKeepRunning;
         private static List<string> jokes;
         private static NameSwapper nameSwapper = new NameSwapper("Chuck", "Norris", "male");
         private static JokeHandler jokeHandler = new JokeHandler(maxQuantity);
+        private static List<bool> trueFalseList;
+        private static List<string> yesNoList;
+        private static List<int> numbersList;
 
         static void Main(string[] args)
         {
             jokeHandler.GetCategories();
-            MakeInputDictionaries();
             MakeMenuItems();
 
             Console.WriteLine("JOKE GENERATOR\n");
@@ -36,33 +35,27 @@ namespace ConsoleApp1
             {
                 nameSwapper.GetNames();
 
-                usesCategory = RunMenuItem<bool>(menuUseCategory, yesNoInputDict);
+                usesCategory = menuUseCategory.Execute();
                 
                 if (usesCategory)
-                    jokeCategory = RunMenuItem<string>(menuChooseCategory, categoriesInputDict);
+                    jokeCategory = menuChooseCategory.Execute();
 
                 jokes = jokeHandler.GetJokes(jokeCategory, usesCategory);
 
-                usesRandomName = RunMenuItem<bool>(menuUseRandomName, yesNoInputDict);
+                usesRandomName = menuUseRandomName.Execute();
 
                 if (usesRandomName)
                 {
                     nameSwapper.ChangeName(jokes);
                 }
 
-                jokeQuantity = RunMenuItem<int>(menuChooseQuantity, oneToNineInputDict);
+                jokeQuantity = menuChooseQuantity.Execute();
                 
                 PrintJokes();
 
-                wantsMoreJokes = RunMenuItem<bool>(menuKeepRunning, yesNoInputDict);
+                wantsMoreJokes = menuKeepRunning.Execute();
             }
             Console.WriteLine("Goodbye");
-        }
-
-        private static T RunMenuItem<T>(MenuItem menuItem, Dictionary<string, T> inputDict)
-        {
-            menuItem.Execute();
-            return inputDict[menuItem.GetInput()];
         }
 
         private static void PrintJokes()
@@ -73,52 +66,30 @@ namespace ConsoleApp1
 
         private static void MakeMenuItems()
         {
-            menuUseRandomName = new MenuItem(
-                "Use random name? y/n: ", new List<string>(yesNoInputDict.Keys));
+            MakeLists();
+            
+            menuUseRandomName = new MenuItem<bool>("Use random name?: ", trueFalseList);
+            menuUseRandomName.SetPrintOptions(yesNoList);
 
-            menuUseCategory = new MenuItem(
-                "Specify a category? y/n: ", new List<string>(yesNoInputDict.Keys));
+            menuUseCategory = new MenuItem<bool>("Specify a category?: ", trueFalseList);
+            menuUseCategory.SetPrintOptions(yesNoList);
 
-            string chooseCategoryString = jokeHandler.CategoriesToString() + "Select a category: ";
-            menuChooseCategory = new MenuItem(
-                chooseCategoryString, new List<string>(categoriesInputDict.Keys));
+            menuChooseCategory = new MenuItem<string>("Select a category: ", jokeHandler.ListCategories());
 
-            menuChooseQuantity = new MenuItem(
-                "Number of jokes? 1-9: ", new List<string>(oneToNineInputDict.Keys));
+            menuChooseQuantity = new MenuItem<int>($"Number of jokes? 1-{maxQuantity}: ", numbersList);
+            menuChooseQuantity.ShowPrintOptions(false);
 
-            menuKeepRunning = new MenuItem(
-                "Run again? y/n: ", new List<string>(yesNoInputDict.Keys));
+            menuKeepRunning = new MenuItem<bool>("Run again?: ", trueFalseList);
+            menuKeepRunning.SetPrintOptions(yesNoList);
         }
 
-        private static void MakeInputDictionaries()
+        private static void MakeLists()
         {
-            yesNoInputDict = MakeYesNoDict();
-            oneToNineInputDict = MakeOneToNineDict();
-            categoriesInputDict = MakeCategoriesDict();
-        }
-
-        private static Dictionary<string, string> MakeCategoriesDict()
-        {
-            Dictionary<string, string> categoriesInputDict = new Dictionary<string, string>();
-            foreach (int x in Enumerable.Range(0, jokeHandler.CategoryCount()))
-                categoriesInputDict[(x+1).ToString()] = jokeHandler.ListCategories()[x];
-            return categoriesInputDict;
-        }
-
-        private static Dictionary<string, int> MakeOneToNineDict()
-        {
-            Dictionary<string, int> oneToNineInputDict = new Dictionary<string, int>();
-            foreach (int x in Enumerable.Range(1, 9))
-                oneToNineInputDict[x.ToString()] = x;
-            return oneToNineInputDict;
-        }
-
-        private static Dictionary<string, bool> MakeYesNoDict()
-        {
-            Dictionary<string, bool> yesNoInputDict = new Dictionary<string, bool>();
-            yesNoInputDict["y"] = true;
-            yesNoInputDict["n"] = false;
-            return yesNoInputDict;
+            trueFalseList = new List<bool>() { true, false };
+            yesNoList = new List<string>() { "yes", "no" };
+            numbersList = new List<int>();
+            for (int i = 1; i <= maxQuantity; i++)
+                numbersList.Add(i);
         }
     }
 }
