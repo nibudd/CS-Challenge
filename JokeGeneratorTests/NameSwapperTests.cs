@@ -9,43 +9,7 @@ namespace JokeGeneratorTests
 	{
 		public NameSwapper MakeNameSwapper()
 		{
-			return new NameSwapper("Chuck", "Norris");
-		}
-
-		[TestMethod]
-		public void DownloadNames_NoExceptions()
-		{
-			NameSwapper nameSwapper = MakeNameSwapper();
-			try
-			{
-				nameSwapper.DownloadNames();
-			}
-			catch
-			{
-				Assert.Fail();
-			}
-		}
-
-		[TestMethod]
-		public void ChangeName_NoExceptions()
-		{
-			NameSwapper nameSwapper = MakeNameSwapper();
-			nameSwapper.DownloadNames();
-			List<string> strList = new List<string>
-			{
-				"Chuck Norris",
-				"Chuck's Norris",
-				"Chuck Norris'"
-			};
-			
-			try
-			{
-				nameSwapper.ChangeName(strList);
-			}
-			catch
-			{
-				Assert.Fail();
-			}
+			return new NameSwapper("Chuck Norris");
 		}
 
 		[TestMethod]
@@ -67,17 +31,19 @@ namespace JokeGeneratorTests
 		{
 			NameSwapper nameSwapper = MakeNameSwapper();
 			nameSwapper.DownloadNames();
-			string newFirst = nameSwapper.SwapNames("Chuck");
-			string newLast = nameSwapper.SwapNames("Norris");
+			string oldName = "Chuck Norris";
+			string oldPossessive = "Chuck Norris'";
+			string newName = nameSwapper.SwapNameAndPossessive(oldName);
+			string newPossessive = nameSwapper.SwapNameAndPossessive(oldPossessive);
 
 			List<string> oldNames = new List<string> 
-			{ ". Chuck Norris", "Chuck Norris.", "Chucky" };
-			List<string> newNames = new List<string> 
-			{ $". {newFirst} {newLast}", $"{newFirst} {newLast}.", "Chucky" };
+			{ $". {oldName}", $"{oldName}.", $"{oldPossessive}" };
+			List<string> newNames = new List<string>
+			{ $". {newName}", $"{newName}.", $"{newPossessive}" };
 
 			for (int i = 0; i < oldNames.Count; i++)
 			{
-				string swappedName = nameSwapper.SwapNames(oldNames[i]);
+				string swappedName = nameSwapper.SwapNameAndPossessive(oldNames[i]);
 				StringAssert.Contains(swappedName, newNames[i]);
 			}
 		}

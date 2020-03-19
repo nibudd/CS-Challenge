@@ -28,13 +28,13 @@ namespace ConsoleApp1
             newPossessive = MakePossessives(newName);
         }
 
-        public void ChangeName(List<string> strList)
+        public void SwapNames(List<string> strList)
         {
             for (int i = 0; i < strList.Count(); i++)
-                strList[i] = SwapNames(strList[i]);
+                strList[i] = SwapNameAndPossessive(strList[i]);
         }
         
-        public string SwapNames(string str)
+        public string SwapNameAndPossessive(string str)
         {
             str = str.Replace(oldPossessive, newPossessive);
             str = str.Replace(oldName, newName);

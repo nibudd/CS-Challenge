@@ -19,7 +19,7 @@ namespace ConsoleApp1
         private static MenuItem<int> menuChooseQuantity;
         private static MenuItem<bool> menuKeepRunning;
         private static List<string> jokes;
-        private static NameSwapper nameSwapper = new NameSwapper("Chuck", "Norris");
+        private static NameSwapper nameSwapper = new NameSwapper("Chuck Norris");
         private static JokeHandler jokeHandler = new JokeHandler(maxQuantity);
         private static List<bool> trueFalseList;
         private static List<string> yesNoList;
@@ -44,7 +44,7 @@ namespace ConsoleApp1
                 if (usesRandomName)
                 {
                     nameSwapper.DownloadNames();
-                    nameSwapper.ChangeName(jokes);
+                    nameSwapper.SwapNames(jokes);
                 }
                     
                 PrintJokes();
