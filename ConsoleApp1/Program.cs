@@ -27,32 +27,44 @@ namespace ConsoleApp1
 
         static void Main(string[] args)
         {
-            jokeHandler.GetCategories();
-            MakeMenuItems();
+            Setup();
 
-            Console.WriteLine("JOKE GENERATOR\n");
             while (wantsMoreJokes)
             {
-                nameSwapper.GetNames();
-
                 usesCategory = menuUseCategory.Execute();
-                
+
                 if (usesCategory)
                     jokeCategory = menuChooseCategory.Execute();
-
-                usesRandomName = menuUseRandomName.Execute();
 
                 jokeQuantity = menuChooseQuantity.Execute();
                 jokes = jokeHandler.GetJokes(jokeCategory, usesCategory, jokeQuantity);
 
-                if (usesRandomName)
-                    nameSwapper.ChangeName(jokes);
+                usesRandomName = menuUseRandomName.Execute();
 
+                if (usesRandomName)
+                {
+                    nameSwapper.GetNames();
+                    nameSwapper.ChangeName(jokes);
+                }
+                    
                 PrintJokes();
 
                 wantsMoreJokes = menuKeepRunning.Execute();
             }
+
+            Teardown();
+        }
+
+        private static void Teardown()
+        {
             Console.WriteLine("Goodbye");
+        }
+
+        private static void Setup()
+        {
+            jokeHandler.GetCategories();
+            MakeMenuItems();
+            Console.WriteLine("JOKE GENERATOR\n");
         }
 
         private static void PrintJokes()
