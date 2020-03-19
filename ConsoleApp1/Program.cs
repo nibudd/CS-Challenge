@@ -40,17 +40,14 @@ namespace ConsoleApp1
                 if (usesCategory)
                     jokeCategory = menuChooseCategory.Execute();
 
-                jokes = jokeHandler.GetJokes(jokeCategory, usesCategory);
-
                 usesRandomName = menuUseRandomName.Execute();
 
-                if (usesRandomName)
-                {
-                    nameSwapper.ChangeName(jokes);
-                }
-
                 jokeQuantity = menuChooseQuantity.Execute();
-                
+                jokes = jokeHandler.GetJokes(jokeCategory, usesCategory, jokeQuantity);
+
+                if (usesRandomName)
+                    nameSwapper.ChangeName(jokes);
+
                 PrintJokes();
 
                 wantsMoreJokes = menuKeepRunning.Execute();

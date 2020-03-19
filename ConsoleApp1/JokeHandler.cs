@@ -18,14 +18,14 @@ namespace ConsoleApp1
             this.maxQuantity = maxQuantity;
         }
 
-        public List<string> GetJokes(string jokeCategory, bool usesCategory)
+        public List<string> GetJokes(string jokeCategory, bool usesCategory, int quantity)
         {
             List<string> jokes = new List<string>();
             string url = "jokes/random";
             if (usesCategory)
                 url += $"?category={jokeCategory}";
 
-            foreach (int _ in Enumerable.Range(1, maxQuantity))
+            foreach (int _ in Enumerable.Range(1, quantity))
             {
                 JObject result = chuckNorrisFeed.GetResponse(url);
                 jokes.Add(result.Value<string>("value"));
