@@ -6,17 +6,13 @@ using System.Text;
 
 namespace ConsoleApp1
 {
-	class JokeHandler
+	public class JokeHandler
 	{
-        private int maxQuantity;
         private JsonFeed chuckNorrisFeed =
             new JsonFeed("https://api.chucknorris.io");
         private List<string> jokeCategories;
 
-        public JokeHandler(int maxQuantity)
-        {
-            this.maxQuantity = maxQuantity;
-        }
+        public JokeHandler(){}
 
         public List<string> GetJokes(string jokeCategory, bool usesCategory, int quantity)
         {

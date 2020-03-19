@@ -20,7 +20,7 @@ namespace ConsoleApp1
         private static MenuItem<bool> menuKeepRunning;
         private static List<string> jokes;
         private static NameSwapper nameSwapper = new NameSwapper("Chuck Norris");
-        private static JokeHandler jokeHandler = new JokeHandler(maxQuantity);
+        private static JokeHandler jokeHandler = new JokeHandler();
         private static List<bool> trueFalseList;
         private static List<string> yesNoList;
         private static List<int> numbersList;
