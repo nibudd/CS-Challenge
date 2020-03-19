@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace ConsoleApp1
 {
-    class JsonFeed
+    public class JsonFeed
     {
 		private HttpClient client;
 

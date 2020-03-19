@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-	class NameSwapper
+	public class NameSwapper
 	{
 		private JsonFeed namesFeed = 
 			new JsonFeed("http://uinames.com/api/");
@@ -19,7 +19,7 @@ namespace ConsoleApp1
         private string oldFirstPossessive;
         private string oldLastPossessive;
 
-        public NameSwapper(string first, string second, string gender)
+        public NameSwapper(string first, string second)
         {
             oldFirst = first;
             oldLast = second;
@@ -27,7 +27,7 @@ namespace ConsoleApp1
             oldLastPossessive = MakePossessives(oldLast);
         }
 
-        public void GetNames()
+        public void DownloadNames()
 		{
 			JObject nameData = namesFeed.GetResponse("?region=canada&gender=male");
             newFirst = nameData.Value<string>("name");
@@ -43,7 +43,7 @@ namespace ConsoleApp1
                 strList[i] = SwapNames(strList[i]);
         }
         
-        private string SwapNames(string str)
+        public string SwapNames(string str)
         {
             str = str.Replace(oldFirstPossessive, newFirstPossessive);
             str = str.Replace(oldLastPossessive, newLastPossessive);
@@ -52,7 +52,7 @@ namespace ConsoleApp1
             return str;
         }
 
-        private string MakePossessives(string name)
+        public string MakePossessives(string name)
         {
             string possessive = name + "'";
             if (!name.EndsWith("s"))
