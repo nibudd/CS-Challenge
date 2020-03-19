@@ -35,6 +35,8 @@ namespace ConsoleApp1
             Console.WriteLine("JOKE GENERATOR\n");
             while (wantsMoreJokes)
             {
+                nameSwapper.GetNames();
+
                 usesCategory = RunMenuItem<bool>(menuUseCategory, yesNoInputDict);
                 
                 if (usesCategory)
@@ -46,7 +48,6 @@ namespace ConsoleApp1
 
                 if (usesRandomName)
                 {
-                    nameSwapper.GetNames();
                     nameSwapper.ChangeName(jokes);
                 }
 
