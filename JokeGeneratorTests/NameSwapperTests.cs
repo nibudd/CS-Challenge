@@ -13,14 +13,14 @@ namespace JokeGeneratorTests
 		}
 
 		[TestMethod]
-		public void MakePossessive_AddsSWhenAppropriate()
+		public void MakePossessive_AddsS()
 		{
 			NameSwapper nameSwapper = MakeNameSwapper();
 			List<string> namesSingular = new List<string> { "Sam", "Lars" };
-			List<string> namesPlural = new List<string> { "Sam's", "Lars'" };
+			List<string> namesPlural = new List<string> { "Sam's", "Lars's" };
 			for (int i = 0; i < 2; i++)
 			{
-				string pluralizedName = nameSwapper.MakePossessives(namesSingular[i]);
+				string pluralizedName = nameSwapper.MakePossessive(namesSingular[i]);
 				StringAssert.Contains(pluralizedName, namesPlural[i]);
 			}
 

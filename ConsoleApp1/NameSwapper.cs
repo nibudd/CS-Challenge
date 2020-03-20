@@ -12,18 +12,20 @@ namespace ConsoleApp1
 		private string newName;
 		private string newPossessive;
 		private string oldPossessive;
+		private string oldBadPossessive;
 
 		public NameSwapper(string oldName)
 		{
 			this.oldName = oldName;
-			oldPossessive = MakePossessives(this.oldName);
+			oldPossessive = MakePossessive(this.oldName);
+			oldBadPossessive = MakeBadPossessive(this.oldName);
 		}
 
 		public void DownloadNames()
 		{
 			JObject nameData = namesFeed.GetResponse("?region=canada&gender=male");
 			newName = nameData.Value<string>("name") + " " + nameData.Value<string>("surname");
-			newPossessive = MakePossessives(newName);
+			newPossessive = MakePossessive(newName);
 		}
 
 		public void SwapNames(List<string> strList)
@@ -35,16 +37,19 @@ namespace ConsoleApp1
 		public string SwapNameAndPossessive(string str)
 		{
 			str = str.Replace(oldPossessive, newPossessive);
+			str = str.Replace(oldBadPossessive, newPossessive);
 			str = str.Replace(oldName, newName);
 			return str;
 		}
 
-		public string MakePossessives(string name)
+		public string MakePossessive(string name)
 		{
-			string possessive = name + "'";
-			if (!name.EndsWith("s"))
-				possessive += "s";
-			return possessive;
+			return name + "'s";
+		}
+
+		public string MakeBadPossessive(string name)
+		{
+			return name + "'";
 		}
 	}
 }
